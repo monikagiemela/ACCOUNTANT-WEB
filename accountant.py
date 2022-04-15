@@ -37,66 +37,60 @@ def main():
     
     # Check if konto.txt file exists
     if os.path.isfile("konto.txt"):
-    
         print()
         account()
  
-    # The doesn't exist - create a file and initiate account ballance info
+    # konto.txt file doesn't exist - create a file and initiate account ballance info
     else:
-
         with open("konto.txt", "w") as account_file:
-
             account_file.write("saldo: 0")
     
     # Execute code based on user command
     with open("magazyn.txt", "a"):
 
-        if len(commands) < 2:
-            
-            print("Podaj nazwę komendy i odpowiednie parametry")
-            quit()
+        if len(commands) < 2:    
+            sys.exit("""\nPodaj nazwę komendy i odpowiednie parametry.
 
-        if commands[1] not in AVAILABLE_COMMANDS:
-            
-            print("Podaj poprawną komendę")
-            quit()
+Program jest wywoływany w następujący sposób:
+a) python accountant.py saldo <int wartosc> <str komentarz>
+b) python accountant.py sprzedaż <str identyfikator produktu> <int cena> <int liczba sprzedanych>
+c) python accountant.py zakup <str identyfikator produktu> <int cena> <int liczba zakupionych>
+d) python accountant.py konto
+e) python accountant.py magazyn <str identyfikator produktu 1> <str identyfikator produktu 2> <str identyfikator produktu 3> ...
+f) python accountant.py przegląd""")         
 
+        if commands[1] not in AVAILABLE_COMMANDS:    
+            sys.exit("Podaj poprawną komendę")
+           
         if commands[1] == "zakup":
-
             buy()
             # Add current command to log.txt
             save_to_log()
             account()
           
         if commands[1] == "saldo":
-
             saldo()
             # Add current command to log.txt
             save_to_log()
             account()
                          
-        if commands[1] == "sprzedaż":
-            
+        if commands[1] == "sprzedaż":    
             sell()
             # Add current command to log.txt
             save_to_log()
             account()
                     
-        if commands[1] == "konto":
-            
+        if commands[1] == "konto":    
             account()
             # Add current command to log.txt
             save_to_log()
         
         if commands[1] == "magazyn":
-
             view_storage()
             # Add current command to log.txt
             save_to_log()
-            account()
             
-        if commands[1] == "przegląd":
-            
+        if commands[1] == "przegląd":     
             # Add current command to log.txt
             save_to_log()
             view_log()
@@ -106,14 +100,10 @@ def main():
 def account():
 
     # Add current command to log.txt
-    save_to_log()
-
     with open("konto.txt", "r") as account_file:
             
-        for line in account_file:
-            
-            if line.startswith("saldo:"):
-                
+        for line in account_file:    
+            if line.startswith("saldo:"):    
                 line = line.strip().split()
                 print(f"Saldo konta: {line[1]}")
        
@@ -121,36 +111,29 @@ def account():
 "Buy products"
 def buy():
 
-    try:
-        
+    try:    
         product = str(commands[2])
     
-    except ValueError or IndexError:
-        
-        print("Podaj indentyfikator produktu")
+    except ValueError or IndexError:    
+        sys.exit("Podaj indentyfikator produktu")
     
-    try:
-        
+    try:    
         price = int(commands[3])
     
-    except ValueError or IndexError:
+    except ValueError or IndexError:    
+        sys.exit("Podaj cenę za sztukę w groszach")
         
-        print("Podaj cenę za sztukę w groszach")
-        quit()
     
-    try:
-        
+    try:    
         purchase_quantity = int(commands[4])
     
-    except ValueError or IndexError:
-        
-        print("Podaj ilość zakupionego produktu")
+    except ValueError or IndexError:    
+        sys.exit("Podaj ilość zakupionego produktu")
           
     
-    if price < 1 or purchase_quantity < 1:
+    if price < 1 or purchase_quantity < 1:    
+        sys.exit("Cena ani ilość nie mogą być mniejsze niż 1") 
         
-        print("Cena ani ilość nie mogą być mniejsze niż 1") 
-        quit()
     
     # Total purchase value
     total = price * purchase_quantity
@@ -163,18 +146,14 @@ def buy():
         
         for line in account_file:
             
-            if line.startswith("saldo:"):
-                
+            if line.startswith("saldo:"):    
                 line = line.strip().split()
                 current_account = int(line[1])
                 
-                if current_account < total:
-                    
-                    print("Brak wystarczającej ilości środków na koncie")
-                    quit()
-                
-                else:
-                    
+                if current_account < total:        
+                    sys.exit("Brak wystarczającej ilości środków na koncie")
+                        
+                else:    
                     current_account -= total
 
     with open("konto.txt", "w") as account_file:
@@ -189,8 +168,7 @@ def buy():
         # Check if product is already in the store and fetch its quantity
         for line in store_file:
 
-            if line.startswith(product):
-                
+            if line.startswith(product):     
                 split_line = line.strip().split()
                 store_quantity = int(split_line[1])
                 new_store_quantity = store_quantity + purchase_quantity
@@ -201,8 +179,7 @@ def buy():
             else:
                 temp_file += f"{line}\n"
         
-        if not product_in_file:
-            
+        if not product_in_file:    
             temp_file += f"{product} {purchase_quantity}\n"
            
     # Print temp_file contents to file
@@ -221,10 +198,9 @@ def buy():
 "View storage"
 def view_storage():
     
-    if len(commands) < 3:
+    if len(commands) < 3:    
+        sys.exit("Podaj id produktu")
         
-        print("Podaj id produktu")
-        quit()
     
     # Read magazyn.txt file and print requested products' data
     with open("magazyn.txt", "r") as store_file:
@@ -236,8 +212,7 @@ def view_storage():
             
             for command in commands[2:]:
                 
-                if line.startswith(command):
-                    
+                if line.startswith(command):    
                     searched_line = line.split()
                     print(": ".join(searched_line))
 
@@ -245,21 +220,17 @@ def view_storage():
 "Register a new transaction"
 def saldo():
     
-    try:
-        
+    try:    
         value = int(commands[2])
     
-    except ValueError or IndexError:
+    except ValueError or IndexError:    
+        sys.exit("Podaj kwotę w groszach")
         
-        print("Podaj kwotę w groszach")
-        
-    try:
-        
+    try:    
         comment = str(commands[3])
     
-    except ValueError or IndexError:
-        
-        print("Podaj komantarz do zmiany salda")
+    except ValueError or IndexError:    
+        sys.exit("Podaj komantarz do zmiany salda")
 
     with open("tranzakcje.txt", "a") as transactions_file:
         
@@ -271,8 +242,7 @@ def saldo():
         
         for line in account_file:
             
-            if line.startswith("saldo:"):
-                
+            if line.startswith("saldo:"):    
                 line = line.strip().split()
                 current_account += int(line[1])
                 
@@ -297,38 +267,28 @@ def save_to_log():
 "Sell products"
 def sell():
 
-    try:
-        
+    try:    
         product = str(commands[2])
     
-    except ValueError or IndexError:
-        
+    except ValueError or IndexError:    
         print("Podaj indentyfikator produktu")
     
-    try:
-        
+    try:    
         price = int(commands[3])
     
-    except ValueError or IndexError:
-        
-        print("Podaj cenę za sztukę w groszach")
-        quit()
-    
-    try:
-        
+    except ValueError or IndexError:    
+        sys.exit("Podaj cenę za sztukę w groszach")
+          
+    try:    
         sell_quantity = int(commands[4])
     
-    except ValueError or IndexError:
+    except ValueError or IndexError:    
+        sys.exit("Podaj ilość sprzedanego produktu")
         
-        print("Podaj ilość sprzedanego produktu")
-        
-
     total = price * sell_quantity
 
-    if price < 1 or sell_quantity < 1:
-        
-        print("Cena ani ilość nie mogą być mniejsze niż 1") 
-        quit()
+    if price < 1 or sell_quantity < 1:    
+        sys.exit("Cena ani ilość nie mogą być mniejsze niż 1") 
 
     # Check availability of the product
     new_store_quantity = 0
@@ -337,29 +297,27 @@ def sell():
     new_line = f"{product} {new_store_quantity}\n"
     temp_file = ""
     
+    # Search for the line in file where the product is located
     with open("magazyn.txt", "r") as store_file:
-        
+        # Check quantity of the product in store and write each line to the temp_file
         for line in store_file:    
-            
-            if line.startswith(product):
-                
+            # Update line contents with the requested amount of the product is available in the store
+            if line.startswith(product):    
                 line = line.strip().split()
                 current_store_quantity = int(line[1])
                 
-                if current_store_quantity >= sell_quantity:
-                    
+                if current_store_quantity >= sell_quantity:    
                     new_store_quantity = current_store_quantity - sell_quantity
                     temp_file += new_line
                 
-                else:
-                    
-                    print("Brak wystarczającej ilości produktu w magazynie")
+                else:    
+                    sys.exit("Brak wystarczającej ilości produktu w magazynie")
               
             else:
                 temp_file += f"{line}\n"
 
 
-    # Print temp_file contents to file
+    # Write temp_file contents to file
     with open("magazyn.txt", "w") as store_file:
         
         store_file.write(temp_file)
@@ -371,8 +329,7 @@ def sell():
         
         for line in account_file:
             
-            if line.startswith("saldo:"):
-                
+            if line.startswith("saldo:"):    
                 line = line.strip().split()
                 current_account = int(line[1])
                 
@@ -400,7 +357,7 @@ def view_log():
         
         print(log_file.read(), sep="/n")
     
-    quit()
+    sys.exit()
 
 
 if __name__ == "__main__":      
