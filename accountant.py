@@ -99,8 +99,8 @@ def buy():
                 else:    
                     current_account -= total
 
-    with open("konto.txt", "w") as account_file:
-        account_file.write(f"saldo: {current_account}")
+    #Write current account balance to konto.txt file
+    update_konto_file(current_account)
     
     # Print magazyn.txt file contents to a string temp_file replacing the 
     # changed line with new_line
@@ -123,13 +123,10 @@ def buy():
             temp_file += f"{product} {quantity}\n"
            
     # Print temp_file contents to file
-    with open("magazyn.txt", "w") as store_file:    
-        store_file.write(temp_file)
-       
-    with open("tranzakcje.txt", "a") as transactions_file:    
-        transaction_str = " ". join(commands[1: ])
-        transactions_file.write(transaction_str + "\n")
-    print(" ".join(commands))
+    update_magazyn_file(temp_file)
+          
+    # Write current transaction to tranzakcje.txt file
+    update_tranzakcje_file()    
  
 "View storage"
 def view_storage():    
@@ -169,8 +166,8 @@ def saldo():
                 
     current_account += value
 
-    with open("konto.txt", "w") as account_file:
-        account_file.write(f"saldo: {current_account}")
+    #Write current account balance to konto.txt file
+    update_konto_file(current_account)
     print(" ".join(commands))
 
 "Save current command to log.txt - helper function"
@@ -205,37 +202,27 @@ def sell():
             else:
                 temp_file += f"{line}\n"
 
-    # Write temp_file contents to file
-    with open("magazyn.txt", "w") as store_file:   
-        store_file.write(temp_file)
+    # Print temp_file contents to file
+    update_magazyn_file(temp_file)
        
     # Find current account balance
-    current_account = 0
-    
+    current_account = 0  
     with open("konto.txt", "r") as account_file:    
         for line in account_file:
             
             if line.startswith("saldo:"):    
                 line = line.strip().split()
-                current_account = int(line[1])
-                
-    current_account += total
-
-    # Write current account balance to konto.txt file
-    with open("konto.txt", "w") as account_file:    
-        account_file.write(f"saldo: {current_account}")
-   
-    # Write current transaction to tranzakcje.txt file
-    with open("tranzakcje.txt", "a") as transactions_file:    
-        transaction_str = " ". join(commands[1: ])
-        transactions_file.write(transaction_str + "\n")
+                current_account = int(line[1])               
     
-    print(" ".join(commands))
+    current_account += total 
+    #Write current account balance to konto.txt file
+    update_konto_file(current_account)
+    
+    # Write current transaction to tranzakcje.txt file
+    update_tranzakcje_file()       
 
 "View history of commands"
-def view_log():
-    
-    # Print all historical commands
+def view_log():    
     with open("log.txt", "r") as log_file:    
         print(log_file.read(), sep="/n")
     sys.exit()
@@ -273,6 +260,24 @@ def validate_user_inputs():
     if price < 1 or quantity < 1:    
         sys.exit("Cena ani ilość nie mogą być mniejsze niż 1") 
     return (product, price, quantity, total)
+
+"Helper function - update tranzakcje.txt file"
+def update_tranzakcje_file():
+    with open("tranzakcje.txt", "a") as transactions_file:    
+        transaction_str = " ". join(commands[1: ])
+        transactions_file.write(transaction_str + "\n")
+    print(" ".join(commands))
+
+"Helper function - update konto.txt file"
+def update_konto_file(current_account):
+    with open("konto.txt", "w") as account_file:    
+        account_file.write(f"saldo: {current_account}")
+
+"Helper function - update magazyn.txt file"
+def update_magazyn_file(temp_file):
+    with open("magazyn.txt", "w") as store_file:    
+            store_file.write(temp_file)
+
 
 if __name__ == "__main__":      
     main()
