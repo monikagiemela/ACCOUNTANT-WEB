@@ -57,15 +57,15 @@ f) python accountant.py przegląd""")
             sys.exit("Podaj poprawną komendę")   
         elif commands[1] == "zakup":
             buy() 
-            account()  
+            view_account()  
         elif commands[1] == "saldo":
             saldo()
-            account()                
+            view_account()                
         elif commands[1] == "sprzedaż":    
             sell()
-            account()           
+            view_account()           
         elif commands[1] == "konto":    
-            account()
+            view_account()
         elif commands[1] == "magazyn":
             view_storage()   
         elif commands[1] == "przegląd":     
@@ -74,56 +74,37 @@ f) python accountant.py przegląd""")
         save_to_log()       
     
 "View current account"
-def account():
+def view_account():
     # Add current command to log.txt
-    with open("konto.txt", "r") as account_file:        
-        for line in account_file:    
-            if line.startswith("saldo:"):    
-                line = line.strip().split()
-                print(f"Saldo konta: {line[1]}")
+    print(f"Saldo konta: {check_balance()}")
                    
 "Buy products"
 def buy():
     # Check if user's commands are correct   
     product, price, quantity, total = validate_user_inputs()  
+    
     # Check available funds 
-    current_account = 0
-   
-    with open("konto.txt", "r") as account_file:    
-        for line in account_file:    
-            if line.startswith("saldo:"):    
-                line = line.strip().split()
-                current_account = int(line[1])    
-                if current_account < total:        
-                    sys.exit("Brak wystarczającej ilości środków na koncie")        
-                else:    
-                    current_account -= total
+    current_account = int(check_balance())    
+    if current_account < total:        
+        sys.exit("Brak wystarczającej ilości środków na koncie")        
+    else:    
+        current_account -= total
 
     #Write current account balance to konto.txt file
     update_konto_file(current_account)
     
-    # Print magazyn.txt file contents to a string temp_file replacing the 
-    # changed line with new_line
-    temp_file = ""
-    product_in_file = False
+    # Write contents of magazyn.txt file to file_dict
+    try:
+        current_store_quantity, file_dict = check_quantity(product)
+    except TypeError:
+        file_dict = {}
     
-    with open("magazyn.txt", "r") as store_file:    
-        # Check if product is already in the store and fetch its quantity
-        for line in store_file:
-            if line.startswith(product):     
-                split_line = line.strip().split()
-                store_quantity = int(split_line[1])
-                new_store_quantity = store_quantity + quantity
-                new_line = f"{product} {new_store_quantity}\n"
-                temp_file += new_line
-                product_in_file = True
-            else:
-                temp_file += f"{line}\n"
-        if not product_in_file:    
-            temp_file += f"{product} {quantity}\n"
+    new_store_quantity = current_store_quantity + quantity
+    # Change quantity of the product in the file_dict
+    file_dict[product] = new_store_quantity
            
-    # Print temp_file contents to file
-    update_magazyn_file(temp_file)
+    # Write file_dict contents to magazyn.txt file
+    update_magazyn_file(file_dict)
           
     # Write current transaction to tranzakcje.txt file
     update_tranzakcje_file()    
@@ -180,39 +161,25 @@ def save_to_log():
 def sell():
     # Check if user's commands are correct
     product, price, quantity, total = validate_user_inputs()
-    # Check availability of the product
-    new_store_quantity = 0
-    # Print file contents to string and replace the changed line with new_line
-    new_line = f"{product} {new_store_quantity}\n"
-    temp_file = ""
-    
-    # Search for the line in file where the product is located
-    with open("magazyn.txt", "r") as store_file:
-        # Check quantity of the product in store and write each line to the temp_file
-        for line in store_file:    
-            # Update line contents with the requested amount of the product is available in the store
-            if line.startswith(product):    
-                line = line.strip().split()
-                current_store_quantity = int(line[1])    
-                if current_store_quantity >= quantity:    
-                    new_store_quantity = current_store_quantity - quantity
-                    temp_file += new_line   
-                else:    
-                    sys.exit("Brak wystarczającej ilości produktu w magazynie")   
-            else:
-                temp_file += f"{line}\n"
 
-    # Print temp_file contents to file
-    update_magazyn_file(temp_file)
+    # Search for the line in magazyn.txt file where the product is located
+    # Write contents of magazyn.txt file to file_dict
+    try:
+        current_store_quantity, file_dict = check_quantity(product)
+    except TypeError:
+        sys.exit("Brak produktu w magazynie")
+
+    if current_store_quantity >= quantity:    
+        new_store_quantity = current_store_quantity - quantity
+        file_dict[product] = new_store_quantity
+    else:    
+        sys.exit("Brak wystarczającej ilości produktu w magazynie")   
+
+    # Print file_dict contents to file
+    update_magazyn_file(file_dict)
        
     # Find current account balance
-    current_account = 0  
-    with open("konto.txt", "r") as account_file:    
-        for line in account_file:
-            
-            if line.startswith("saldo:"):    
-                line = line.strip().split()
-                current_account = int(line[1])               
+    current_account = int(check_balance())                 
     
     current_account += total 
     #Write current account balance to konto.txt file
@@ -232,7 +199,6 @@ def start_database():
     # Check if konto.txt file exists
     if os.path.isfile("konto.txt"):
         print()
-        account()
     # konto.txt file doesn't exist - create a file and initiate account ballance info
     else:
         with open("konto.txt", "w") as account_file:
@@ -274,10 +240,33 @@ def update_konto_file(current_account):
         account_file.write(f"saldo: {current_account}")
 
 "Helper function - update magazyn.txt file"
-def update_magazyn_file(temp_file):
-    with open("magazyn.txt", "w") as store_file:    
-            store_file.write(temp_file)
+def update_magazyn_file(file_dict):
+    with open("magazyn.txt", "w") as store_file:
+        for product, value in file_dict.items():
+            store_file.write(f"{product} {value}\n")
 
+"Helper function - check account balance"
+def check_balance():
+    with open("konto.txt", "r") as account_file:        
+        for line in account_file:    
+            if line.startswith("saldo:"):    
+                line = line.strip().split()
+                return line[1]
+
+"Check quantity of product in the store"
+def check_quantity(product):
+    # Write file contents to the file_dict
+    file_dict = {}
+    current_store_quantity = 0
+    with open("magazyn.txt", "r") as store_file:
+        if store_file != "":
+            for line in store_file:
+                line = line.strip().split()
+                file_dict[line[0]] = int(line[1]) 
+                if line[0] == product:  
+                    current_store_quantity = int(line[1])                  
+    return (current_store_quantity, file_dict) 
 
 if __name__ == "__main__":      
+
     main()
