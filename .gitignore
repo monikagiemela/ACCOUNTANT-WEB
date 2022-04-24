@@ -1,5 +1,7 @@
 .DS_Store
-konto.txt
+current_balance.txt
 log.txt
-magazyn.txt
-tranzakcje.txt
+store.csv
+transactions.csv
+__pycache__
+.vscode/

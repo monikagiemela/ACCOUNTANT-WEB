@@ -1,12 +1,12 @@
 """
 Napisz program (accountant.py), który będzie rejestrował operacje na koncie firmy i stan magazynu.
 Program jest wywoływany w następujący sposób:
-a) python accountant.py saldo <int wartosc> <str komentarz>
-b) python accountant.py sprzedaż <str identyfikator produktu> <int cena> <int liczba sprzedanych>
-c) python accountant.py zakup <str identyfikator produktu> <int cena> <int liczba zakupionych>
-d) python accountant.py konto
-e) python accountant.py magazyn <str identyfikator produktu 1> <str identyfikator produktu 2> <str identyfikator produktu 3> ...
-f) python accountant.py przegląd
+a) python saldo.py <plik><int wartosc> <str komentarz>
+b) python sprzedaz.py <plik><str identyfikator produktu> <int cena> <int liczba sprzedanych>
+c) python zakup.py <plik> <str identyfikator produktu> <int cena> <int liczba zakupionych>
+d) python konto.py <plik>
+e) python magazyn.py <plik><str identyfikator produktu 1> <str identyfikator produktu 2> <str identyfikator produktu 3> ...
+f) python przeglad.py <plik>
 
 Działanie programu będzie zależne od podanych argumentów
 Niezależnie od trybu program zawsze będzie działał w następujący sposób
@@ -27,56 +27,61 @@ V. Program wypisuje wszystkie podane parametry w formie identycznej, w jakiej je
 """
 
 import sys
-import os.path
+import csv
+
+from helpers import check_balance, check_quantity, update_balance_file 
+from helpers import update_store_file, save_to_log
+from helpers import validate_user_inputs, start_database, read_commands
 
 
-AVAILABLE_COMMANDS = ("saldo", "zakup", "sprzedaż", "konto", "magazyn", 
-"przegląd")
-commands = sys.argv
+
+AVAILABLE_COMMANDS = ("transaction", "buy", "sell", "balance", "store", "log")
+
+commands = read_commands()
 
 def main():
     
-    # Check if database already exists - otherwise create file konto.txt
+    # Check if database already exists - otherwise create file current_balance.txt
     start_database()
     
-    # Execute code based on user command
-    with open("magazyn.txt", "a"):
-
+    # Run the code based on user command
+    with open("store.csv", "a", newline='') as store_file:
         if len(commands) < 2:    
-            sys.exit("""\nPodaj nazwę komendy i odpowiednie parametry.
+            sys.exit("""\nEnter the right commands.
 
-Program jest wywoływany w następujący sposób:
-a) python accountant.py saldo <int wartosc> <str komentarz>
-b) python accountant.py sprzedaż <str identyfikator produktu> <int cena> <int liczba sprzedanych>
-c) python accountant.py zakup <str identyfikator produktu> <int cena> <int liczba zakupionych>
-d) python accountant.py konto
-e) python accountant.py magazyn <str identyfikator produktu 1> <str identyfikator produktu 2> <str identyfikator produktu 3> ...
-f) python accountant.py przegląd""")         
+Run the program as follows:
+a) python accountant.py transaction <int value> <str comment>
+b) python accountant.py buy <str product id> <int price> <int quantity>
+c) python accountant.py sell <str product id> <int price> <int quantity>
+d) python accountant.py balance
+e) python accountant.py store <str prodcut id 1> <str prodcut id 2> <str prodcut id 3> ...
+f) python accountant.py log
+""")         
 
         if commands[1] not in AVAILABLE_COMMANDS:    
-            sys.exit("Podaj poprawną komendę")   
-        elif commands[1] == "zakup":
+            sys.exit("Enter a valid command")   
+        elif commands[1] == "buy":
             buy() 
             view_account()  
-        elif commands[1] == "saldo":
-            saldo()
+        elif commands[1] == "transaction":
+            make_transaction()
             view_account()                
-        elif commands[1] == "sprzedaż":    
+        elif commands[1] == "sell":    
             sell()
             view_account()           
-        elif commands[1] == "konto":    
+        elif commands[1] == "balance":    
             view_account()
-        elif commands[1] == "magazyn":
+        elif commands[1] == "store":
             view_storage()   
-        elif commands[1] == "przegląd":     
+        elif commands[1] == "log":     
             # Add current command to log.txt
             view_log()
         save_to_log()       
-    
+
 "View current account"
 def view_account():
     # Add current command to log.txt
-    print(f"Saldo konta: {check_balance()}")
+    print(f"Current balance: {check_balance()}")
                    
 "Buy products"
 def buy():
@@ -84,78 +89,78 @@ def buy():
     product, price, quantity, total = validate_user_inputs()  
     
     # Check available funds 
-    current_account = int(check_balance())    
-    if current_account < total:        
-        sys.exit("Brak wystarczającej ilości środków na koncie")        
+    current_balance = int(check_balance())    
+    if current_balance < total:        
+        sys.exit("Insufficient funds in the account")        
     else:    
-        current_account -= total
+        current_balance -= total
 
-    #Write current account balance to konto.txt file
-    update_konto_file(current_account)
+    #Write current account balance to current_balance.txt file
+    update_balance_file(current_balance)
     
-    # Write contents of magazyn.txt file to file_dict
-    try:
-        current_store_quantity, file_dict = check_quantity(product)
-    except TypeError:
-        file_dict = {}
-    
+    # Write contents of store.csv file to file_list
+    current_store_quantity, file_list = check_quantity(product)
     new_store_quantity = current_store_quantity + quantity
-    # Change quantity of the product in the file_dict
-    file_dict[product] = new_store_quantity
-           
-    # Write file_dict contents to magazyn.txt file
-    update_magazyn_file(file_dict)
-          
-    # Write current transaction to tranzakcje.txt file
-    update_tranzakcje_file()    
- 
+    # Change quantity of the product in the file_list
+    if file_list == []:
+        file_list.append({"product": product, 
+                        "quantity": new_store_quantity})
+    else:
+        for row in file_list:
+            if row["product"] == product:
+                row = {"product": product, "quantity": new_store_quantity}
+            else:
+                file_list.append({"product": product, "quantity": new_store_quantity})     
+    # Write file_list contents to store.csv file
+    update_store_file(file_list)
+
 "View storage"
 def view_storage():    
     if len(commands) < 3:    
-        sys.exit("Podaj id produktu")          
-    # Read magazyn.txt file and print requested products' data
-    with open("magazyn.txt", "r") as store_file:       
-        for line in store_file:   
-            line = line.strip()
-            for command in commands[2:]:    
-                if line.startswith(command):    
-                    searched_line = line.split()
-                    print(": ".join(searched_line))
+        sys.exit("Please enter product id")          
+    # Read store.csv file and print requested products' data
+    for command in commands[2:]:
+        (current_store_quantity, file_list) = check_quantity(command)
+        print(f"{command}: {current_store_quantity}")
+    #with open("store.csv", "r", newline="") as store_file:
+    #    reader = csv.DictReader(store_file)
+    #    for row in reader:   
+    #        for command in commands[2:]:    
+    #            if row["product"] == command:
+    #                print(f"{row['product']}: {row['quantity']}")
 
 "Register a new transaction"
-def saldo():  
+def make_transaction():  
     try:    
         value = int(commands[2])
     except ValueError or IndexError:    
-        sys.exit("Podaj kwotę w groszach")
+        sys.exit("Please enter value of transaction")
         
     try:    
         comment = str(commands[3])
     except ValueError or IndexError:    
-        sys.exit("Podaj komantarz do zmiany salda")
+        sys.exit("Please enter a comment")
 
-    with open("tranzakcje.txt", "a") as transactions_file:    
-        transactions_file.write(f"{commands[1]} {value} {comment}\n")
+    with open("transactions.csv", "a", newline="") as transactions_file:
+        fieldnames = ["transaction", "quantity", "comment"]
+        writer = csv.DictWriter(transactions_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow({"transaction": commands[1], "quantity": value, 
+                        "comment": comment})
     
-    current_account = 0
+    current_balance = 0
     
-    with open("konto.txt", "r") as account_file:   
-        for line in account_file:    
-            if line.startswith("saldo:"):    
+    with open("current_balance.txt", "r") as balance_file:
+        for line in balance_file:
+            if line.startswith("balance:"):
                 line = line.strip().split()
-                current_account += int(line[1])
+                current_balance = int(line[1])
                 
-    current_account += value
+    current_balance += value
 
-    #Write current account balance to konto.txt file
-    update_konto_file(current_account)
+    #Write current account balance to current_balance.txt file
+    update_balance_file(current_balance)
     print(" ".join(commands))
-
-"Save current command to log.txt - helper function"
-def save_to_log():  
-    with open("log.txt", "a") as log_file:
-        commands_str = " ".join(commands)
-        log_file.write(commands_str + "\n")
 
 "Sell products"
 def sell():
@@ -165,108 +170,32 @@ def sell():
     # Search for the line in magazyn.txt file where the product is located
     # Write contents of magazyn.txt file to file_dict
     try:
-        current_store_quantity, file_dict = check_quantity(product)
+        current_store_quantity, file_list = check_quantity(product)
     except TypeError:
-        sys.exit("Brak produktu w magazynie")
+        sys.exit("Product not available")
 
     if current_store_quantity >= quantity:    
         new_store_quantity = current_store_quantity - quantity
-        file_dict[product] = new_store_quantity
+        for row in file_list:
+            if row["product"] == product:
+                row = {"product": product, "quantity": new_store_quantity}
     else:    
-        sys.exit("Brak wystarczającej ilości produktu w magazynie")   
+        sys.exit("Insuficiant availability of the requested prodcut")   
 
     # Print file_dict contents to file
-    update_magazyn_file(file_dict)
-       
+    update_store_file(file_list)       
     # Find current account balance
-    current_account = int(check_balance())                 
-    
-    current_account += total 
+    current_balance = int(check_balance())                    
+    current_balance += total 
     #Write current account balance to konto.txt file
-    update_konto_file(current_account)
-    
-    # Write current transaction to tranzakcje.txt file
-    update_tranzakcje_file()       
-
+    update_balance_file(current_balance)
+        
 "View history of commands"
 def view_log():    
     with open("log.txt", "r") as log_file:    
         print(log_file.read(), sep="/n")
     sys.exit()
 
-"Helper function - check if database exists"
-def start_database():
-    # Check if konto.txt file exists
-    if os.path.isfile("konto.txt"):
-        print()
-    # konto.txt file doesn't exist - create a file and initiate account ballance info
-    else:
-        with open("konto.txt", "w") as account_file:
-            account_file.write("saldo: 0")
-
-"Helper function - check if user entered correct commands"
-def validate_user_inputs():
-    try:    
-        product = str(commands[2]) 
-    except ValueError or IndexError:    
-        print("Podaj indentyfikator produktu")
-    
-    try:    
-        price = int(commands[3]) 
-    except ValueError or IndexError:    
-        sys.exit("Podaj cenę za sztukę w groszach")
-          
-    try:    
-        quantity = int(commands[4]) 
-    except ValueError or IndexError:    
-        sys.exit("Podaj ilość produktu")
-        
-    total = price * quantity
-
-    if price < 1 or quantity < 1:    
-        sys.exit("Cena ani ilość nie mogą być mniejsze niż 1") 
-    return (product, price, quantity, total)
-
-"Helper function - update tranzakcje.txt file"
-def update_tranzakcje_file():
-    with open("tranzakcje.txt", "a") as transactions_file:    
-        transaction_str = " ". join(commands[1: ])
-        transactions_file.write(transaction_str + "\n")
-    print(" ".join(commands))
-
-"Helper function - update konto.txt file"
-def update_konto_file(current_account):
-    with open("konto.txt", "w") as account_file:    
-        account_file.write(f"saldo: {current_account}")
-
-"Helper function - update magazyn.txt file"
-def update_magazyn_file(file_dict):
-    with open("magazyn.txt", "w") as store_file:
-        for product, value in file_dict.items():
-            store_file.write(f"{product} {value}\n")
-
-"Helper function - check account balance"
-def check_balance():
-    with open("konto.txt", "r") as account_file:        
-        for line in account_file:    
-            if line.startswith("saldo:"):    
-                line = line.strip().split()
-                return line[1]
-
-"Check quantity of product in the store"
-def check_quantity(product):
-    # Write file contents to the file_dict
-    file_dict = {}
-    current_store_quantity = 0
-    with open("magazyn.txt", "r") as store_file:
-        if store_file != "":
-            for line in store_file:
-                line = line.strip().split()
-                file_dict[line[0]] = int(line[1]) 
-                if line[0] == product:  
-                    current_store_quantity = int(line[1])                  
-    return (current_store_quantity, file_dict) 
 
 if __name__ == "__main__":      
-
     main()
