@@ -1,7 +1,7 @@
 import sys
 import csv
 from UTILS.Exception import userError
-from Accountant import Accountant
+from accountant import Accountant
 
 class Manager:
 
@@ -15,13 +15,13 @@ class Manager:
     def is_manager(self) -> bool:
         """Check if the user is registered"""
         with open("managers.csv", newline="") as file:
-            reader = csv.DictReader(file)
+            reader = csv.reader(file)
             for row in reader:
-                if row["username"] == self.username and row["password"] == self.password:
+                if row[0] == self.username and row[1] == self.password:
                     return True 
             return False         
 
-    def create_new_manager(self):
+    def create_new_manager(self) -> str:
         """Create a new manager - only a registered user can create a new manager account"""
         new_user_username = input("New user username: ")
         new_user_password = input("New user password: ")

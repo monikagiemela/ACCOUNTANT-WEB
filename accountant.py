@@ -2,8 +2,8 @@ import sys
 import csv
 
 from UTILS.helpers import check_balance, check_quantity, update_balance_file 
-from UTILS.helpers import update_store_file, save_to_log
-from UTILS.helpers import validate_user_inputs, start_database, read_commands
+from UTILS.helpers import update_store_file
+from UTILS.helpers import validate_user_inputs
 
 
 class Accountant:
@@ -16,14 +16,14 @@ class Accountant:
     def __setattr__(self, name: str, value: str) -> None:
         self.__dict__[name] = value
 
-    def view_account(self):
+    def view_account(self) -> str:
         """View current account"""
         return f"Current balance: {check_balance()}"
                    
-    def buy(self):
+    def buy(self) -> str:
         """Buy products"""
         # Check if user's commands are correct   
-        product, price, quantity, total = validate_user_inputs(self.commands)  
+        product, _, quantity, total = validate_user_inputs(self.commands)  
         
         # Check available funds 
         current_balance = int(check_balance())    
@@ -43,24 +43,25 @@ class Accountant:
             file_list.append({"product": product, 
                             "quantity": new_store_quantity})
         else:
-           for i in range(len(file_list)):
+            for i in range(len(file_list)):
                 if file_list[i]["product"] == product:
                     file_list[i] = {"product": product, "quantity": new_store_quantity}
+            file_list.append({"product": product, "quantity": new_store_quantity})
     
         # Write file_list contents to store.csv file
         update_store_file(file_list)
         return f"Bought {product}: {quantity} units"
 
-    def view_storage(self):
+    def view_storage(self) -> str:
         """View storage"""    
         if len(self.commands) < 3:    
             sys.exit("Please enter product id")          
         # Read store.csv file and print requested products' data
         for command in self.commands[2:]:
-            (current_store_quantity, file_list) = check_quantity(command)
+            (current_store_quantity, _) = check_quantity(command)
             return f"{command}: {current_store_quantity}"
 
-    def make_transaction(self):
+    def make_transaction(self) -> str:
         """Register a new transaction"""
         try:    
             value = int(self.commands[2])
@@ -93,7 +94,7 @@ class Accountant:
         update_balance_file(current_balance)
         return " ".join(self.commands)
 
-    def sell(self):
+    def sell(self) -> str:
         """Sell products"""
         # Check if user's commands are correct
         product, price, quantity, total = validate_user_inputs(self.commands)
@@ -122,8 +123,7 @@ class Accountant:
         update_balance_file(current_balance)
         return f"Sold {product}: {quantity} units"
             
-    def view_log(self):
+    def view_log(self) -> str:
         """View history of commands"""    
         with open("log.txt", "r") as log_file:    
             return f"{log_file.read()}"
- 

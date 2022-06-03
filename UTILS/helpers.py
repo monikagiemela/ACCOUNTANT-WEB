@@ -25,7 +25,7 @@ def check_quantity(product) -> tuple:
                     current_store_quantity = int(row["quantity"])            
     return (current_store_quantity, file_list)
     
-def update_store_file(file_list):
+def update_store_file(file_list) -> None:
     """Update store.csv file"""
     with open("store.csv", "w", newline="") as store_file:
         fieldnames = ["product", "quantity"]
@@ -34,25 +34,25 @@ def update_store_file(file_list):
         for product in file_list:        
             writer.writerow(product)
 
-def update_balance_file(current_balance):
+def update_balance_file(current_balance) -> None:
     """Update current_balance.txt file"""
     with open("current_balance.txt", "w") as balance_file:
         balance_file.write(f"balance: {current_balance}")
 
-def update_transactions_file(commands):
+def update_transactions_file(commands) -> str:
     """Update transactions.txt file"""
     with open("transactions.txt", "a") as transactions_file:    
         transaction_str = " ". join(commands[1: ])
         transactions_file.write(transaction_str + "\n")
     return " ".join(commands)
 
-def save_to_log(commands):
+def save_to_log(commands) -> None:
     """Save current command to log.txt"""
     with open("log.txt", "a") as log_file:
         commands_str = " ".join(commands)
         log_file.write(commands_str + "\n")
 
-def validate_user_inputs(commands):
+def validate_user_inputs(commands) -> tuple:
     """Check if user entered correct commands"""
     try:    
         product = str(commands[2]) 
@@ -75,7 +75,7 @@ def validate_user_inputs(commands):
         sys.exit("Price and quantity cannot be less than 1") 
     return (product, price, quantity, total)
 
-def start_database():
+def start_database() -> None:
     """Check if database exists"""
     # Check if current_balance.txt file exists
     if os.path.isfile("current_balance.txt"):
@@ -85,6 +85,6 @@ def start_database():
         with open("current_balance.txt", "w") as account_file:
             account_file.write("balance: 0")
 
-def read_commands():
+def read_commands() -> list:
     """Read args"""
     return sys.argv

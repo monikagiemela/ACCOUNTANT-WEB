@@ -30,7 +30,7 @@ V. Program wypisuje wszystkie podane parametry w formie identycznej, w jakiej je
 import os
 import sys
 
-from Accountant import Accountant
+from accountant import Accountant
 from UTILS.helpers import save_to_log, start_database, read_commands
 
 from UTILS.Manager import Manager
