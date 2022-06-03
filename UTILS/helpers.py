@@ -3,16 +3,16 @@ import sys
 import csv 
 
 
-"Check account balance"
-def check_balance():
+def check_balance() -> str:
+    """Check account balance"""
     with open("current_balance.txt", "r") as balance_file:        
         for line in balance_file:    
             if line.startswith("balance:"):    
                 line = line.strip().split()
                 return line[1]
 
-"Ccheck quantity of product in the store - return quantity and file_list"
-def check_quantity(product):
+def check_quantity(product) -> tuple:
+    """Check quantity of the product in the store - return quantity and file_list"""
     # Write file contents to the file_list
     file_list = []
     current_store_quantity = 0
@@ -20,13 +20,13 @@ def check_quantity(product):
         reader = csv.DictReader(store_file)
         if reader != "":
             for row in reader:
-                file_list.append(row) 
+                file_list.append(row)
                 if row["product"] == product:  
                     current_store_quantity = int(row["quantity"])            
     return (current_store_quantity, file_list)
     
-"Update store.csv file"
 def update_store_file(file_list):
+    """Update store.csv file"""
     with open("store.csv", "w", newline="") as store_file:
         fieldnames = ["product", "quantity"]
         writer = csv.DictWriter(store_file, fieldnames=fieldnames)
@@ -34,29 +34,26 @@ def update_store_file(file_list):
         for product in file_list:        
             writer.writerow(product)
 
-"Update current_balance.txt file"
 def update_balance_file(current_balance):
+    """Update current_balance.txt file"""
     with open("current_balance.txt", "w") as balance_file:
         balance_file.write(f"balance: {current_balance}")
 
-"Update transactions.txt file"
-def update_transactions_file():
-    commands = read_commands()
+def update_transactions_file(commands):
+    """Update transactions.txt file"""
     with open("transactions.txt", "a") as transactions_file:    
         transaction_str = " ". join(commands[1: ])
         transactions_file.write(transaction_str + "\n")
-    print(" ".join(commands))
+    return " ".join(commands)
 
-"Save current command to log.txt"
-def save_to_log():
-    commands = read_commands() 
+def save_to_log(commands):
+    """Save current command to log.txt"""
     with open("log.txt", "a") as log_file:
         commands_str = " ".join(commands)
         log_file.write(commands_str + "\n")
 
-"Check if user entered correct commands"
-def validate_user_inputs():
-    commands = read_commands()
+def validate_user_inputs(commands):
+    """Check if user entered correct commands"""
     try:    
         product = str(commands[2]) 
     except ValueError or IndexError:    
@@ -78,16 +75,16 @@ def validate_user_inputs():
         sys.exit("Price and quantity cannot be less than 1") 
     return (product, price, quantity, total)
 
-"Check if database exists"
 def start_database():
+    """Check if database exists"""
     # Check if current_balance.txt file exists
     if os.path.isfile("current_balance.txt"):
         print()
-    # current_balance.txt file doesn't exist - create a file and initiate account balance info
+    # If current_balance.txt file doesn't exist - create a file and initiate account balance info
     else:
         with open("current_balance.txt", "w") as account_file:
             account_file.write("balance: 0")
 
-"Read args"
 def read_commands():
+    """Read args"""
     return sys.argv

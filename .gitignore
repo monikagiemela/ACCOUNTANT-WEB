@@ -4,4 +4,6 @@ log.txt
 store.csv
 transactions.csv
 __pycache__
+UTILS/__pycache__
 .vscode/
+env/
