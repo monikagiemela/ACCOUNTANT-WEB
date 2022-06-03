@@ -3,6 +3,7 @@ current_balance.txt
 log.txt
 store.csv
 transactions.csv
+managers.csv
 __pycache__
 UTILS/__pycache__
 .vscode/
