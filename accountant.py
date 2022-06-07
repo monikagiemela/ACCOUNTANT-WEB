@@ -1,9 +1,9 @@
 import sys
 import csv
 
-from UTILS.helpers import check_balance, check_quantity, update_balance_file 
-from UTILS.helpers import update_store_file
-from UTILS.helpers import validate_user_inputs
+from app.UTILS.helpers import check_balance, check_quantity, update_balance_file 
+from app.UTILS.helpers import update_store_file
+from app.UTILS.helpers import validate_user_inputs
 
 
 class Accountant:

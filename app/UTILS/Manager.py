@@ -1,6 +1,6 @@
 import sys
 import csv
-from UTILS.Exception import userError
+from app.UTILS.Exception import userError
 from accountant import Accountant
 
 class Manager:

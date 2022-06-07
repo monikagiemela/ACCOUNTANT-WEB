@@ -31,9 +31,9 @@ import os
 import sys
 
 from accountant import Accountant
-from UTILS.helpers import save_to_log, start_database, read_commands
+from app.UTILS.helpers import save_to_log, start_database, read_commands
 
-from UTILS.Manager import Manager
+from app.UTILS.Manager import Manager
 
 
 def main():
