@@ -21,7 +21,7 @@ class History(db.Model):
     price = db.Column(db.Float, nullable=True)
     sale_price = db.Column(db.Float, nullable=True)
     value = db.Column(db.Float, nullable=False)
-    time = db.Column(db.Date, default=datetime.date(), nullable=False)
+    time = db.Column(db.DateTime, default=datetime.today(), nullable=False)
     accountant_id = db.Column(db.Integer, db.ForeignKey('accountants.id'), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
      
