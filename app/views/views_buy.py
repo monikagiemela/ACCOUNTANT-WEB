@@ -27,7 +27,7 @@ def buy():
         except:
             return apology("Enter purchase price per unit")
         try:
-            sale_price = float(request.form.get("price"))
+            sale_price = float(request.form.get("sale_price"))
         except:
             return apology("Enter sale price per unit")
         
@@ -41,8 +41,13 @@ def buy():
         # Update database
         transaction = "buy"
         accountant.current_balance = current_balance
-        transaction = History(transaction=transaction, product_name=product_name, quantity=quantity, price=price,
-                            value=quantity*price, accountant_id=accountant_id, user_id=id)
+        transaction = History(transaction=transaction, 
+                            product_name=product_name, 
+                            quantity=quantity, 
+                            price=price, 
+                            sale_price=sale_price,
+                            value=quantity*price, 
+                            accountant_id=accountant_id, user_id=id)
         db.session.add(transaction)
         db.session.commit()
 
@@ -51,7 +56,11 @@ def buy():
             current_quantity = product.quantity 
             product.quantity = current_quantity + quantity
         else:
-            product = Storage(product_name=product_name, quantity=quantity, price=price, sale_price=sale_price, accountant_id=accountant_id)
+            product = Storage(product_name=product_name, 
+                            quantity=quantity, 
+                            price=price, 
+                            sale_price=sale_price, 
+                            accountant_id=accountant_id)
             db.session.add(product)
         db.session.commit()
         flash("Purchase successfull")

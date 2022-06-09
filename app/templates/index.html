@@ -16,7 +16,7 @@
                 <th class="text-start" scope="col">#</th>
                 <th class="text-start" scope="col">Product</th>
                 <th class="text-start" scope="col">Units</th>
-                <th class="text-start" scope="col">Price</th>
+                <th class="text-start" scope="col">Sale Price</th>
             </tr>
         </thead>
         {% if (context.storage | length) > 0 %}
@@ -26,9 +26,9 @@
                 <tr>
                     <td class="text-start">{{ counter | length }}</td>
                     {% set var = counter.append(1) %}
-                    <td class="text-start">{{ product.name }}</td>
+                    <td class="text-start">{{ product.product_name }}</td>
                     <td class="text-start">{{ product.quantity }}</td>
-                    <td class="text-start">{{ product.price | usd }}</td>
+                    <td class="text-start">{{ product.sale_price | usd }}</td>
                 </tr>
                 {% endif %}
             {% endfor %}

@@ -8,20 +8,22 @@
 <h6 class="fw-light topright">Current balance: {{ context.current_balance | usd }}</h6>
 <br>
 <h4 class="fw-light topright">Check history of transactions for specific dates</h6>
-<div class="row g-2">
-    <div class="col-md">
-        <div class="form-floating">
-        <input id="from" name="from" type="date">
-        <label for="from">From</label>
+<br>
+<form action="/history/<date_from>/<date_to>" class="row mb-3 g-3 align-items-center" method="get">
+    <div class="col-md-4">
+        <label class="form-label" for="from">From</label>
+        <input id="from" min={{ min_date }} max={{ max_date }} name="date_from" type="date">        
         </div>
     </div>
-    <div class="col-md">
-        <div class="form-floating">
-        <input id="to" name="to" type="date">
-        <label for="to">To</label>
+    <div class="col-md-4">
+        <label class="form-label" for="to">To</label>    
+        <input id="to" min={{ min_date }} max={{ max_date }} name="date_to" type="date">        
         </div>  
     </div>
-</div>
+    <div class="col-md-4">   
+        <button class="btn btn-primary" type="submit">Check history</button>      
+    </div>  
+</form>
 <br><br>
 <h4 class="fw-light">All transactions</h4>
 <br>
@@ -33,7 +35,7 @@
             <th class="text-start">Transaction ID</th>
             <th class="text-start">Transaction</th>
             <th class="text-start">Product Name</th>
-            <th class="text-start">Quntity</th>
+            <th class="text-start">Quantity</th>
             <th class="text-start">Price</th>
             <th class="text-start">Value</th>
             <th class="text-start">Time</th>
@@ -49,14 +51,14 @@
             <td class="text-start">{{ transaction.transaction }}</td>
             {% if transaction.product_name %}
             <td class="text-start">{{ transaction.product_name }}</td>
-            <td class="text-start">{{ transaction.qunatity }}</td>
-            <td class="text-start">{{ transaction.price }}</td>
+            <td class="text-start">{{ transaction.quantity }}</td>
+            <td class="text-start">{{ transaction.price | usd }}</td>
             {% else %}
             <td class="text-start">----</td>
             <td class="text-start">----</td>
             <td class="text-start">----</td>
             {% endif %}
-            <td class="text-start">{{ transaction.value }}</td>
+            <td class="text-start">{{ transaction.value | usd }}</td>
             <td class="text-start">{{ transaction.time }}</td>
             <td class="text-start">{{ transaction.accountant_id }}</td>
             <td class="text-start">{{ transaction.user_id }}</td>                 

@@ -7,7 +7,7 @@
 {% block main %}
     <h6 class="fw-light topright">Account balance: {{ current_balance | usd }}</h6>
     <br>
-    <p class="fw-light">Enter purchase details</p>
+    <h5 class="fw-light">Enter purchase details</h5>
     <form action="/buy" method="post">
         <div class="mb-3">
             <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="product-name" name="product_name" placeholder="Product name" type="text">

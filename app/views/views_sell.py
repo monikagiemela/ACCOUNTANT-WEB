@@ -18,14 +18,20 @@ def sell():
         list_of_products = []
         for product in products:
             if product.quantity > 0 and product.product_name not in list_of_products:              
-                list_of_products.append(product.product_name)
+                list_of_products.append(
+                    {
+                        "product_name": product.product_name,
+                        "product_quantity": product.quantity,
+                        "current_sale_price": product.sale_price
+                        }
+                    )
         context = {
             "current_balance": current_balance,
             "list_of_products": list_of_products
         }
         return render_template("sell.html", context=context)
 
-    else:
+    elif request.method == "POST":
         # Checkes if user chose a product_name
         product_name = request.form.get("product_name").lower()
         if not product_name:
@@ -56,11 +62,12 @@ def sell():
             return apology(f"{product_name} availability: { product_quantity } units", 400)
 
         # Updated database
+        product.sale_price = price
         transaction = "sell"
         accountant.current_balance += (price * quantity)
         transaction = History(transaction=transaction, product_name=product_name, 
-                        quantity=quantity, price=price, value=quantity*price,
-                        accountat_id=accountant_id, user_id=id)
+                        quantity=quantity, price=price, sale_price=price, value=quantity*price,
+                        accountant_id=accountant_id, user_id=id)
         db.session.add(transaction)
         product.quantity -= quantity
         accountant.current_balance += quantity * price
