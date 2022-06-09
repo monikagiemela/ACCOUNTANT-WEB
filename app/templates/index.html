@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Storage
+{%  endblock %}
+
+{% block main %}
+<h6 class="fw-light topright">Account balance: {{ context.current_balance | usd }}</h6>
+<br>
+<div class="table-responsive">
+<h4 class="fw-light">Storage</h4>
+<br>
+    <table class="table">
+        <thead class="align-top table-dark">
+            <tr>
+                <th class="text-start" scope="col">#</th>
+                <th class="text-start" scope="col">Product</th>
+                <th class="text-start" scope="col">Units</th>
+                <th class="text-start" scope="col">Price</th>
+            </tr>
+        </thead>
+        {% if (context.storage | length) > 0 %}
+            {% set counter = [1] %}
+            {% for product in context.storage %}
+                {% if product.quantity > 0 %}
+                <tr>
+                    <td class="text-start">{{ counter | length }}</td>
+                    {% set var = counter.append(1) %}
+                    <td class="text-start">{{ product.name }}</td>
+                    <td class="text-start">{{ product.quantity }}</td>
+                    <td class="text-start">{{ product.price | usd }}</td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <tr> 
+                <td colspan="6" class="text-center">No products in the storage</td>
+            </tr>
+        {% endif %}
+    </table>
+    <br>
+</div>
+{% endblock %}

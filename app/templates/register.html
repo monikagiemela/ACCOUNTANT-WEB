@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Register
+{% endblock %}
+
+{% block main %}
+<br>
+<h1>User Registration</h1>
+<br>
+<h4>Create a new Accountant and register a new user or add a new user to an existing Accoutant</h4>
+<ul>
+    <li>Fill out all fields to register a new user for an existing Accountant</li>
+    <li>Leave Accountant ID field empty to create a new Accountant</li>
+</ul>
+<br>
+<br>
+<ul class="fw-light list-unstyled">                         
+    <li>Passwords must be at least 8 characters long.</li>
+    <li>Passwords must not be longer than 18 characters.</li>
+    <li>Passwords must contain at least one upper case and one lower case letter.</li>
+    <li>Passwords must contain at least one number</li>
+    <li>Passwords must contain at least one special sign(!, @, #, $, %, ^, &, *, (, ), -, _ ).</li>
+</ul>
+<form action="/register" method="post">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="accountant_id" name="accountant_id" placeholder="Accountant ID" type="text">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" id="accountant_password" name="accountant_password" placeholder="Accountant Password" type="password">
+    </div>
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="email_address" name="email_address" placeholder="Email Address" type="text">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" id="password" name="password" placeholder="Password" type="password">
+    </div>
+    <div class="mb-3">
+        <input class="form-control mx-auto w-auto" id="password" name="confirmation" placeholder="Confirm Password" type="password">
+    </div>
+    <button class="btn btn-primary" type="submit">Register</button>
+</form>
+{% endblock %}

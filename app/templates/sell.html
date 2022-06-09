@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block title %}
+    Sell
+{% endblock %}
+
+{% block main %}
+    <br>
+    <h6 class="fw-light topright">Available credit: {{ context.current_balance | usd }}</h6>
+    <br>
+    <h5 class="fw-light">Sell shares</p>
+    <form class="fw-light" action="/sell" method="post">
+        <div class="mb-3">
+            <select class="form-select fw-light mx-auto w-auto" name="symbol">
+                <option disabled selected>Choose product</option>
+                {% for product_name in context.list_of_products %}
+                    <option value={{ product_name }}>{{ product_name | upper }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+             <input autocomplete="off" autofocus class="form-control fw-light mx-auto w-auto" id="quantity" name="qunatity" placeholder="Number of units" type="text">
+        </div>
+        <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control fw-light mx-auto w-auto" id="price" name="price" placeholder="Price per unit" type="text">
+       </div>
+        <button class="btn btn-primary fw-light" type="submit">Sell</button>
+    </form>
+{% endblock %}
