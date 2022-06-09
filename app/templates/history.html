@@ -7,7 +7,8 @@
 {% block main %}
 <h6 class="fw-light topright">Current balance: {{ context.current_balance | usd }}</h6>
 <br>
-<h4 class="fw-light topright">Check history of transactions for specific dates</h6>
+{% if min_date and max_date %}
+<h6 class="fw-light topright">Check history of transactions for specific dates</h6>
 <br>
 <form action="/history/<date_from>/<date_to>" class="row mb-3 g-3 align-items-center" method="get">
     <div class="col-md-4">
@@ -24,10 +25,12 @@
         <button class="btn btn-primary" type="submit">Check history</button>      
     </div>  
 </form>
+{% endif%}
+
+{% if context.transactions | length > 0 %}
 <br><br>
 <h4 class="fw-light">All transactions</h4>
 <br>
-{% if context.transactions | length > 0 %}
 <div class="table-responsive">
     <table class="table">
         <thead class="table-dark">

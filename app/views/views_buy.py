@@ -63,6 +63,6 @@ def buy():
                             accountant_id=accountant_id)
             db.session.add(product)
         db.session.commit()
-        flash("Purchase successfull")
+        flash("Purchase successful")
         return redirect("/")
     return render_template("buy.html", current_balance=current_balance)
