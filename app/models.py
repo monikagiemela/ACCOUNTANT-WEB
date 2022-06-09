@@ -18,6 +18,7 @@ class History(db.Model):
     product_name = db.Column(db.Text, nullable=True)
     quantity = db.Column(db.Float, nullable=True)
     price = db.Column(db.Float, nullable=True)
+    sale_price = db.Column(db.Float, nullable=True)
     value = db.Column(db.Float, nullable=False)
     time = db.Column(db.DateTime, default=func.now(), nullable=False)
     accountant_id = db.Column(db.Integer, db.ForeignKey('accountants.id'), nullable=False)
