@@ -15,20 +15,22 @@ def history():
     # Fetche all transactions from table "History"
     transactions = History.query.filter_by(accountant_id=accountant_id).all()
     try:
-        min_date = transactions[0].time.date()
-        max_date = transactions[-1].time.date()
+        min_date = transactions[0].time
+        max_date = transactions[-1].time
     except IndexError:
         context = {
         "current_balance": current_balance,
-        "transactions": transactions,
-    }
+        "transactions": transactions
+        }
     else:
         context = {
             "current_balance": current_balance,
             "transactions": transactions,
-            min_date: min_date,
-            max_date: max_date
+            "min_date": min_date,
+            "max_date": max_date
         }
+    print(min_date)
+    print(max_date)
     return render_template("history.html", context=context)
 
 @app.route("/history/<date_from>/<date_to>", methods=["GET"])
