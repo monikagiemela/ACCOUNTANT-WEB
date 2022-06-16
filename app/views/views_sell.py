@@ -28,7 +28,7 @@ def sell():
         context = {
             "current_balance": current_balance,
             "list_of_products": list_of_products
-        }
+        }        
         return render_template("sell.html", context=context)
 
     elif request.method == "POST":
