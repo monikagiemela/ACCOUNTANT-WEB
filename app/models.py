@@ -1,5 +1,4 @@
-from sqlalchemy import func
-from datetime import datetime, date
+from datetime import date
 from app import db
 
 class Accountants(db.Model):
