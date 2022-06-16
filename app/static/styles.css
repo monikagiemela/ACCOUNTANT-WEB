@@ -27,3 +27,15 @@ ion-icon {
     font-size: 14px;
     text-align: left;
 }
+.registration-div {
+    left: 60;
+    margin: auto;
+    position: relative;
+    width: 400px;
+}
+.registration-txt-div {
+    left: 60;
+    margin: auto;
+    position: relative;
+    width: 500px;
+}
