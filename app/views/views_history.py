@@ -8,7 +8,12 @@ from app.UTILS.helpers import login_required
 @app.route("/history", methods=["GET", "POST"])
 @login_required
 def history():
-    """Show history of transactions"""
+    """
+    Show history of transactions.
+    If user selects time period, show only transactions which took place
+    in the selected time period, other show all transactions form this Accountant 
+    instance.
+    """
     
     accountant_id = session.get("accountant_id")
     accountant = Accountants.query.filter_by(id=accountant_id).first()

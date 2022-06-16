@@ -8,7 +8,7 @@ from app.UTILS.helpers import apology, login_required
 @app.route("/buy", methods=["POST", "GET"])
 @login_required
 def buy():
-    """Buy shares of stock"""
+    """Add product to database"""
     accountant_id = session.get("accountant_id")
     accountant = Accountants.query.filter_by(id=accountant_id).first()
     current_balance = accountant.current_balance

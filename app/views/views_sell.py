@@ -8,7 +8,7 @@ from app.UTILS.helpers import apology, login_required
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
-    """Sell shares of stock"""
+    """Sell product"""
     id = session.get("user_id")
     accountant_id = session.get("accountant_id")
     accountant = Accountants.query.filter_by(id=accountant_id).first()    

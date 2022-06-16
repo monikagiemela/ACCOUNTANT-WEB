@@ -7,7 +7,7 @@ from app.UTILS.helpers import login_required
 @app.route("/", methods=["GET", "POST"])
 @login_required
 def index():
-    """Show storage details"""
+    """Show products in the storage"""
     id = session.get("user_id")
     accountant_id = session.get("accountant_id")
     # Fetches available cash from table "Accountants"
