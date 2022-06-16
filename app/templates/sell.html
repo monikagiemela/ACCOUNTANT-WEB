@@ -3,26 +3,25 @@
     Sell
 {% endblock %}
 
-{% block main %}
-    <br>
-    <h6 class="fw-light topright">Available credit: {{ context.current_balance | usd }}</h6>
-    <br>
-    <h5 class="fw-light">Enter sale details</h5>
-    <form class="fw-light" action="/sell" method="post">
-        <div class="mb-3">
-            <select class="form-select fw-light mx-auto w-auto" name="product_name">
-                <option disabled selected>Choose product</option>
-                {% for product in context.list_of_products %}
-                    <option value={{ product.product_name }}>{{ product.product_name | upper }} | Available: {{ product.product_quantity}} | {{ product.current_sale_price | usd}} per unit</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="mb-3">
-             <input autocomplete="off" autofocus class="form-control fw-light mx-auto w-auto" id="quantity" name="quantity" placeholder="Number of units" type="text">
-        </div>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control fw-light mx-auto w-auto" id="price" name="price" placeholder="Price per unit" type="text">
-       </div>
-        <button class="btn btn-primary fw-light" type="submit">Sell</button>
-    </form>
+{% block main %}   
+<h6 class="fw-light topright">Available credit: {{ context.current_balance | usd }}</h6>
+<br>
+<h5 class="fw-light">Enter sale details</h5>
+<form class="fw-light m-3" action="/sell" method="post">
+    <div class="mb-3">
+        <select class="form-select fw-light mx-auto w-auto" name="product_name">
+            <option disabled selected>Choose product</option>
+            {% for product in context.list_of_products %}
+                <option value={{ product.product_name }}>{{ product.product_name | upper }} | Available: {{ product.product_quantity}} | {{ product.current_sale_price | usd}} per unit</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+            <input autocomplete="off" autofocus class="form-control fw-light mx-auto w-auto" id="quantity" name="quantity" placeholder="Number of units" type="text">
+    </div>
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control fw-light mx-auto w-auto" id="price" name="price" placeholder="Price per unit" type="text">
+    </div>
+    <button class="btn btn-primary fw-light" type="submit">Sell</button>
+</form>
 {% endblock %}

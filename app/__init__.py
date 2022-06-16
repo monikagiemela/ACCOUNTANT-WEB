@@ -1,4 +1,5 @@
 #import psycopg2
+import os
 from flask import Flask
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
@@ -23,9 +24,9 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 # Create a database connection
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///accountant.db'
-#DATABASE_URL = os.environ['DATABASE_URL']
-#app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL.replace("postgres", "postgresql")
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///accountant.db'
+DATABASE_URL = os.environ['DATABASE_URL']
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL.replace("postgres", "postgresql")
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

@@ -5,22 +5,22 @@
 {% endblock %}
 
 {% block main %}
-    <h6 class="fw-light topright">Account balance: {{ current_balance | usd }}</h6>
-    <br>
-    <h5 class="fw-light">Enter purchase details</h5>
-    <form action="/buy" method="post">
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="product-name" name="product_name" placeholder="Product name" type="text">
-        </div>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="quantity" name="quantity" placeholder="Quantity" type="text">
-        </div>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="price" name="price" placeholder="Purchase Price per unit" type="text">
-        </div>
-        <div class="mb-3">
-            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="sale_price" name="sale_price" placeholder="Sale Price per unit" type="text">
-        </div>
-        <button class="btn btn-primary" type="submit">Buy</button>
-    </form>
+<h6 class="fw-light topright">Account balance: {{ current_balance | usd }}</h6>
+<br>
+<h5 class="fw-light">Enter purchase details</h5>
+<form action="/buy" class="fw-light m-3" method="post">
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="product-name" name="product_name" placeholder="Product name" type="text">
+    </div>
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="quantity" name="quantity" placeholder="Quantity" type="text">
+    </div>
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="price" name="price" placeholder="Purchase Price per unit" type="text">
+    </div>
+    <div class="mb-3">
+        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="sale_price" name="sale_price" placeholder="Sale Price per unit" type="text">
+    </div>
+    <button class="btn btn-primary" type="submit">Buy</button>
+</form>
 {% endblock %}

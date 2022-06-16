@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block main %}
-<br>
 <h1>User Registration</h1>
 <br>
 <h4>Create a new Accountant and register a new user or add a new user to an existing Accoutant</h4>
@@ -15,13 +14,15 @@
 </ul>
 <br>
 <br>
-<ul class="fw-light list-unstyled">                         
-    <li>Passwords must be at least 8 characters long.</li>
-    <li>Passwords must not be longer than 18 characters.</li>
-    <li>Passwords must contain at least one upper case and one lower case letter.</li>
-    <li>Passwords must contain at least one number</li>
-    <li>Passwords must contain at least one special sign(!, @, #, $, %, ^, &, *, (, ), -, _ ).</li>
-</ul>
+<div class="password-specs">
+    <ul class="fw-light list-unstyled">                         
+        <li>Passwords must be at least 8 characters long.</li>
+        <li>Passwords must not be longer than 18 characters.</li>
+        <li>Passwords must contain at least one upper case and one lower case letter.</li>
+        <li>Passwords must contain at least one number.</li>
+        <li>Passwords must contain at least one special sign(!, @, #, $, %, ^, &, *, (, ), -, _ ).</li>
+    </ul>
+</div>
 <form action="/register" method="post">
     <div class="mb-3">
         <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="accountant_id" name="accountant_id" placeholder="Accountant ID" type="text">

@@ -11,20 +11,23 @@
 <h6 class="fw-light topright">Check history of transactions for specific dates</h6>
 <br>
 <form action="/history" class="row mb-3 g-3 align-items-center" method="post">
-    <div class="col-md-4">
-        <label class="form-label" for="from">From</label>
-        <input id="from" min="{{ min_date }}" max="{{ max_date }}" name="date_from" type="date">        
-        </div>
+    <div class="col-1">
+        <label class="form-label" for="from">Start date</label>
     </div>
-    <div class="col-md-4">
-        <label class="form-label" for="to">To</label>    
-        <input id="to" min="{{ min_date }}" max="{{ max_date }}" name="date_to" type="date">        
-        </div>  
+    <div class="col-3">
+        <input class="form-control" id="from" min="{{ min_date }}" max="{{ max_date }}" name="date_from" type="date" placeholder="Start date">        
     </div>
-    <div class="col-md-4">   
-        <button class="btn btn-primary" type="submit">Check history</button>      
+    <div class="col-1">
+        <label class="form-label" for="to">End date</label>
+    </div>
+    <div class="col-3">
+        <input class="form-control" id="to" min="{{ min_date }}" max="{{ max_date }}" name="date_to" type="date">        
+    </div>
+    <div class="col-3">
+        <button class="btn btn-primary form-control" id="check-history-button" type="submit">Check history</button>      
     </div>  
 </form>
+
 {% endif %}
 
 {% if context.transactions | length > 0 %}
@@ -33,7 +36,7 @@
 <br>
 <div class="table-responsive">
     <table class="table">
-        <thead class="table-dark">
+        <thead class="table-secondary">
             <th class="text-start">#</th>
             <th class="text-start">Transaction ID</th>
             <th class="text-start">Transaction</th>

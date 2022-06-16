@@ -9,4 +9,3 @@ UTILS/__pycache__
 .vscode/
 env/
 flask_session/*
-migrations/
